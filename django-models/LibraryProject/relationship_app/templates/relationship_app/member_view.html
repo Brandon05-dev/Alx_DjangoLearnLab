@@ -1,0 +1,35 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}Member Panel - Library Management System{% endblock %}
+
+{% block content %}
+<h1>Member Panel</h1>
+
+<div style="background-color: #d4edda; padding: 20px; border-radius: 5px; border-left: 4px solid #28a745;">
+    <h2>Welcome, Member!</h2>
+    <p>You can browse and view books in our library. Enjoy exploring our collection!</p>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Member Actions</h3>
+    <div style="display: grid; gap: 15px; max-width: 400px;">
+        <a href="{% url 'list_books' %}" class="btn">Browse Books</a>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Your Information</h3>
+    <p><strong>Role:</strong> {{ user.userprofile.role }}</p>
+    <p><strong>User:</strong> {{ user.username }}</p>
+    <p><strong>Access Level:</strong> Book browsing and viewing</p>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Library Guidelines</h3>
+    <ul>
+        <li>Browse our extensive book collection</li>
+        <li>Contact librarians for assistance</li>
+        <li>Respect library rules and regulations</li>
+    </ul>
+</div>
+{% endblock %}

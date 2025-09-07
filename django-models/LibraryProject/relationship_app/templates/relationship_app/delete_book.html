@@ -1,0 +1,26 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}Delete Book - Library Management System{% endblock %}
+
+{% block content %}
+<h1>Delete Book</h1>
+
+<div style="background-color: #f8d7da; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+    <h2>⚠️ Warning</h2>
+    <p>You are about to permanently delete this book. This action cannot be undone.</p>
+</div>
+
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+    <h3>Book Details</h3>
+    <p><strong>Title:</strong> {{ book.title }}</p>
+    <p><strong>Author:</strong> {{ book.author.name }}</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete "{{ book.title }}" by {{ book.author.name }}?</p>
+    
+    <button type="submit" class="btn btn-danger">Yes, Delete Book</button>
+    <a href="{% url 'list_books' %}" class="btn" style="background-color: #6c757d; margin-left: 10px;">Cancel</a>
+</form>
+{% endblock %}

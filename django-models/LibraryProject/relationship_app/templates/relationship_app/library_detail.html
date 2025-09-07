@@ -1,0 +1,26 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}{{ library.name }} - Library Detail{% endblock %}
+
+{% block content %}
+<h1>{{ library.name }}</h1>
+
+<h2>Books in this Library</h2>
+
+{% if library.books.all %}
+    <div style="display: grid; gap: 15px;">
+        {% for book in library.books.all %}
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+                <h4>{{ book.title }}</h4>
+                <p><strong>Author:</strong> {{ book.author.name }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No books are currently available in this library.</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'list_books' %}" class="btn">Back to All Books</a>
+</div>
+{% endblock %}

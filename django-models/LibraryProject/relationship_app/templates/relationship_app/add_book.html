@@ -1,0 +1,32 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}Add Book - Library Management System{% endblock %}
+
+{% block content %}
+<h1>Add New Book</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="title">Book Title:</label>
+        <input type="text" id="title" name="title" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="author">Author Name:</label>
+        <input type="text" id="author" name="author" required>
+    </div>
+    
+    <button type="submit" class="btn">Add Book</button>
+    <a href="{% url 'list_books' %}" class="btn" style="background-color: #6c757d; margin-left: 10px;">Cancel</a>
+</form>
+
+<div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+    <h3>Instructions</h3>
+    <ul>
+        <li>Enter the complete title of the book</li>
+        <li>Enter the full name of the author</li>
+        <li>If the author doesn't exist, a new author record will be created</li>
+    </ul>
+</div>
+{% endblock %}

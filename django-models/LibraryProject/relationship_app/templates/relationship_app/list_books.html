@@ -1,0 +1,36 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}All Books - Library Management System{% endblock %}
+
+{% block content %}
+<h1>All Books</h1>
+
+{% if books %}
+    <div style="display: grid; gap: 20px;">
+        {% for book in books %}
+            <div style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                <h3>{{ book.title }}</h3>
+                <p><strong>Author:</strong> {{ book.author.name }}</p>
+                {% if user.is_authenticated %}
+                    <div style="margin-top: 10px;">
+                        {% if perms.relationship_app.can_change_book %}
+                            <a href="{% url 'edit_book' book.pk %}" class="btn" style="margin-right: 10px;">Edit</a>
+                        {% endif %}
+                        {% if perms.relationship_app.can_delete_book %}
+                            <a href="{% url 'delete_book' book.pk %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No books available in the library.</p>
+{% endif %}
+
+{% if user.is_authenticated and perms.relationship_app.can_add_book %}
+    <div style="margin-top: 20px;">
+        <a href="{% url 'add_book' %}" class="btn">Add New Book</a>
+    </div>
+{% endif %}
+{% endblock %}

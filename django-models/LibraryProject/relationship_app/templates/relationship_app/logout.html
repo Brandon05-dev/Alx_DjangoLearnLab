@@ -1,0 +1,14 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}Logout - Library Management System{% endblock %}
+
+{% block content %}
+<h1>Logged Out</h1>
+
+<p>You have been successfully logged out.</p>
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'login' %}" class="btn">Login Again</a>
+    <a href="{% url 'list_books' %}" class="btn" style="margin-left: 10px;">Browse Books</a>
+</div>
+{% endblock %}

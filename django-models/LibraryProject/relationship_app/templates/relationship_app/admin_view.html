@@ -1,0 +1,28 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}Admin Panel - Library Management System{% endblock %}
+
+{% block content %}
+<h1>Admin Panel</h1>
+
+<div style="background-color: #e7f3ff; padding: 20px; border-radius: 5px; border-left: 4px solid #2196F3;">
+    <h2>Welcome, Administrator!</h2>
+    <p>You have full access to the system. You can manage users, books, libraries, and system settings.</p>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Admin Actions</h3>
+    <div style="display: grid; gap: 15px; max-width: 400px;">
+        <a href="{% url 'add_book' %}" class="btn">Add New Book</a>
+        <a href="{% url 'list_books' %}" class="btn">Manage Books</a>
+        <a href="/admin/" class="btn">Django Admin</a>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>System Information</h3>
+    <p><strong>Role:</strong> {{ user.userprofile.role }}</p>
+    <p><strong>User:</strong> {{ user.username }}</p>
+    <p><strong>Permissions:</strong> Full system access</p>
+</div>
+{% endblock %}

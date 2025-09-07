@@ -1,0 +1,29 @@
+{% extends 'relationship_app/base.html' %}
+
+{% block title %}Librarian Panel - Library Management System{% endblock %}
+
+{% block content %}
+<h1>Librarian Panel</h1>
+
+<div style="background-color: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #ffc107;">
+    <h2>Welcome, Librarian!</h2>
+    <p>You can manage books and help library members. You have access to book management features.</p>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Librarian Actions</h3>
+    <div style="display: grid; gap: 15px; max-width: 400px;">
+        {% if perms.relationship_app.can_add_book %}
+            <a href="{% url 'add_book' %}" class="btn">Add New Book</a>
+        {% endif %}
+        <a href="{% url 'list_books' %}" class="btn">View All Books</a>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Your Information</h3>
+    <p><strong>Role:</strong> {{ user.userprofile.role }}</p>
+    <p><strong>User:</strong> {{ user.username }}</p>
+    <p><strong>Responsibilities:</strong> Book management and member assistance</p>
+</div>
+{% endblock %}

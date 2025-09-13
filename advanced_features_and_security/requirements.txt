@@ -1,0 +1,12 @@
+Django>=4.2.0,<5.0
+django-csp>=3.7
+Pillow>=9.0.0
+# For production deployment
+gunicorn>=20.1.0
+# For PostgreSQL (uncomment for production)
+# psycopg2-binary>=2.9.0
+# For Redis caching (uncomment for production)
+# redis>=4.0.0
+# django-redis>=5.0.0
+# For monitoring (uncomment for production)
+# sentry-sdk>=1.0.0

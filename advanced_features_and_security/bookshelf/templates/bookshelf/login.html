@@ -1,0 +1,140 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}Login - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">🔐 Secure Login</h4>
+                <small class="text-muted">Please enter your credentials to access the library system</small>
+            </div>
+            <div class="card-body">
+                <!-- Security Notice -->
+                <div class="alert alert-info">
+                    <strong>🔒 Security Features:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>CSRF protection enabled</li>
+                        <li>Secure session handling</li>
+                        <li>Password encryption</li>
+                        <li>Failed login attempt monitoring</li>
+                    </ul>
+                </div>
+                
+                <!-- Login Form -->
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- CSRF Token Information -->
+                    <div class="csrf-info mb-3">
+                        <small class="text-muted">
+                            🛡️ Form protected by CSRF token: {{ csrf_token|slice:":8" }}...
+                        </small>
+                    </div>
+                    
+                    <!-- Username Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            Username *
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                               id="{{ form.username.id_for_label }}"
+                               name="{{ form.username.html_name }}"
+                               value="{{ form.username.value|default:'' }}"
+                               required
+                               autocomplete="username">
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            Password *
+                        </label>
+                        <input type="password" 
+                               class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                               id="{{ form.password.id_for_label }}"
+                               name="{{ form.password.html_name }}"
+                               required
+                               autocomplete="current-password">
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Non-field errors -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error|escape }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            🔐 Login Securely
+                        </button>
+                    </div>
+                    
+                    <!-- Additional Links -->
+                    <div class="text-center mt-3">
+                        <small>
+                            <a href="{% url 'password_change' %}" class="text-decoration-none">
+                                Forgot your password?
+                            </a>
+                        </small>
+                    </div>
+                </form>
+                
+                <!-- Security Information -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">🔒 Login Security Details</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>CSRF Protection:</strong> ✅ Active</li>
+                            <li><strong>Password Encryption:</strong> ✅ PBKDF2 with SHA256</li>
+                            <li><strong>Session Security:</strong> ✅ Secure cookies enabled</li>
+                            <li><strong>HTTPS:</strong> {% if request.is_secure %}✅ Active{% else %}⚠️ Not detected (use HTTPS in production){% endif %}</li>
+                            <li><strong>Brute Force Protection:</strong> ✅ Rate limiting ready</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Demo Users Information (for development) -->
+        {% if debug %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">🧪 Development Mode - Demo Users</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        <strong>Note:</strong> This information is only visible in DEBUG mode.
+                        Create users through the admin interface or Django management commands.
+                    </p>
+                    <small>
+                        Use <code>python manage.py createsuperuser</code> to create an admin user.
+                    </small>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}Home - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <!-- Hero Section -->
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+            <h1 class="display-4">🔒 Secure Library Management System</h1>
+            <p class="lead">
+                A Django application demonstrating advanced security features and best practices.
+            </p>
+            {% if not user.is_authenticated %}
+                <a class="btn btn-light btn-lg" href="{% url 'login' %}" role="button">
+                    🔐 Login to Access Library
+                </a>
+            {% endif %}
+        </div>
+        
+        {% if user.is_authenticated %}
+            <!-- User Dashboard -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">👤 Welcome, {{ user.get_full_name|default:user.username }}!</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                You have successfully logged into the secure library system.
+                                Your permissions allow you to:
+                            </p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>📚 Book Permissions:</h6>
+                                    <ul class="list-unstyled">
+                                        {% if user.has_perm:'bookshelf.can_view' %}
+                                            <li>✅ View books</li>
+                                        {% else %}
+                                            <li>❌ View books</li>
+                                        {% endif %}
+                                        
+                                        {% if user.has_perm:'bookshelf.can_create' %}
+                                            <li>✅ Create books</li>
+                                        {% else %}
+                                            <li>❌ Create books</li>
+                                        {% endif %}
+                                        
+                                        {% if user.has_perm:'bookshelf.can_edit' %}
+                                            <li>✅ Edit books</li>
+                                        {% else %}
+                                            <li>❌ Edit books</li>
+                                        {% endif %}
+                                        
+                                        {% if user.has_perm:'bookshelf.can_delete' %}
+                                            <li>✅ Delete books</li>
+                                        {% else %}
+                                            <li>❌ Delete books</li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h6>⚙️ System Access:</h6>
+                                    <ul class="list-unstyled">
+                                        {% if user.is_staff %}
+                                            <li>✅ Admin access</li>
+                                        {% else %}
+                                            <li>❌ Admin access</li>
+                                        {% endif %}
+                                        
+                                        {% if user.is_superuser %}
+                                            <li>✅ Superuser privileges</li>
+                                        {% else %}
+                                            <li>❌ Superuser privileges</li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="mt-3">
+                                <h6>🚀 Quick Actions:</h6>
+                                <div class="btn-group" role="group">
+                                    {% if user.has_perm:'bookshelf.can_view' %}
+                                        <a href="{% url 'book-list' %}" class="btn btn-outline-primary">
+                                            📖 View Books
+                                        </a>
+                                    {% endif %}
+                                    
+                                    {% if user.has_perm:'bookshelf.can_create' %}
+                                        <a href="{% url 'book-create' %}" class="btn btn-outline-success">
+                                            ➕ Add Book
+                                        </a>
+                                    {% endif %}
+                                    
+                                    {% if user.is_staff %}
+                                        <a href="/admin/" class="btn btn-outline-warning">
+                                            ⚙️ Admin Panel
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- User Profile Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">👤 Profile Information</h6>
+                        </div>
+                        <div class="card-body">
+                            {% if user.profile_photo %}
+                                <div class="text-center mb-3">
+                                    <img src="{{ user.profile_photo.url }}" 
+                                         alt="Profile Photo" 
+                                         class="rounded-circle" 
+                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                            
+                            <ul class="list-unstyled">
+                                <li><strong>Username:</strong> {{ user.username }}</li>
+                                {% if user.email %}
+                                    <li><strong>Email:</strong> {{ user.email }}</li>
+                                {% endif %}
+                                {% if user.date_of_birth %}
+                                    <li><strong>Date of Birth:</strong> {{ user.date_of_birth|date:"M d, Y" }}</li>
+                                {% endif %}
+                                <li><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</li>
+                                <li><strong>Last Login:</strong> {{ user.last_login|date:"M d, Y H:i" }}</li>
+                            </ul>
+                            
+                            <a href="{% url 'password_change' %}" class="btn btn-sm btn-outline-secondary">
+                                🔑 Change Password
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Books -->
+            {% if recent_books and user.has_perm:'bookshelf.can_view' %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">📚 Recent Books ({{ total_books }} total)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for book in recent_books %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ book.title|truncatechars:30 }}</h6>
+                                            <p class="card-text">
+                                                <small class="text-muted">
+                                                    by {{ book.author }}<br>
+                                                    ({{ book.publication_year }})
+                                                </small>
+                                            </p>
+                                            <a href="{% url 'book-detail' book.pk %}" class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if total_books > 5 %}
+                            <a href="{% url 'book-list' %}" class="btn btn-primary">
+                                View All {{ total_books }} Books
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            
+        {% else %}
+            <!-- Not authenticated -->
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">🔐 Authentication Required</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <p>Please log in to access the library management system.</p>
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Security Features Display -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🔒 Security Features Implemented</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>🛡️ User Security:</h6>
+                        <ul>
+                            <li>Custom User Model with additional fields</li>
+                            <li>Strong password validation</li>
+                            <li>Permission-based access control</li>
+                            <li>Session timeout and security</li>
+                            <li>CSRF protection on all forms</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6>🌐 Web Security:</h6>
+                        <ul>
+                            <li>HTTPS enforcement (production)</li>
+                            <li>Security headers (XSS, CSRF, etc.)</li>
+                            <li>Content Security Policy (CSP)</li>
+                            <li>Input validation and sanitization</li>
+                            <li>SQL injection prevention</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success mt-3">
+                    <strong>✅ Current Security Status:</strong>
+                    All security features are active and protecting your data.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}Edit Book - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">✏️ Edit Book: {{ book.title|truncatechars:50 }}</h4>
+                <small class="text-muted">Update book information</small>
+            </div>
+            <div class="card-body">
+                <!-- Security Notice -->
+                <div class="alert alert-info">
+                    <strong>🔒 Security Features:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>CSRF protection enabled</li>
+                        <li>Permission-based access (requires 'can_edit')</li>
+                        <li>Input validation and sanitization</li>
+                        <li>Audit trail tracking</li>
+                    </ul>
+                </div>
+                
+                <!-- Book Edit Form with CSRF Protection -->
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- CSRF Token Information -->
+                    <div class="csrf-info mb-3">
+                        <small class="text-muted">
+                            🛡️ Form protected by CSRF token: {{ csrf_token|slice:":8" }}...
+                        </small>
+                    </div>
+                    
+                    <!-- Title Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                            Book Title *
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                               id="{{ form.title.id_for_label }}"
+                               name="{{ form.title.html_name }}"
+                               value="{{ form.title.value|default:'' }}"
+                               maxlength="200"
+                               required>
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Maximum 200 characters</small>
+                    </div>
+                    
+                    <!-- Author Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.author.id_for_label }}" class="form-label">
+                            Author *
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if form.author.errors %}is-invalid{% endif %}" 
+                               id="{{ form.author.id_for_label }}"
+                               name="{{ form.author.html_name }}"
+                               value="{{ form.author.value|default:'' }}"
+                               maxlength="100"
+                               required>
+                        {% if form.author.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.author.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Maximum 100 characters</small>
+                    </div>
+                    
+                    <!-- Publication Year Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.publication_year.id_for_label }}" class="form-label">
+                            Publication Year *
+                        </label>
+                        <input type="number" 
+                               class="form-control {% if form.publication_year.errors %}is-invalid{% endif %}" 
+                               id="{{ form.publication_year.id_for_label }}"
+                               name="{{ form.publication_year.html_name }}"
+                               value="{{ form.publication_year.value|default:'' }}"
+                               min="1000"
+                               max="2030"
+                               required>
+                        {% if form.publication_year.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.publication_year.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Year between 1000 and 2030</small>
+                    </div>
+                    
+                    <!-- ISBN Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.isbn.id_for_label }}" class="form-label">
+                            ISBN (Optional)
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if form.isbn.errors %}is-invalid{% endif %}" 
+                               id="{{ form.isbn.id_for_label }}"
+                               name="{{ form.isbn.html_name }}"
+                               value="{{ form.isbn.value|default:'' }}"
+                               maxlength="13"
+                               pattern="[0-9\-\s]*"
+                               placeholder="978-0123456789 or 0123456789">
+                        {% if form.isbn.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.isbn.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">10 or 13 digit ISBN (hyphens and spaces allowed)</small>
+                    </div>
+                    
+                    <!-- Description Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">
+                            Description (Optional)
+                        </label>
+                        <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                  id="{{ form.description.id_for_label }}"
+                                  name="{{ form.description.html_name }}"
+                                  rows="4"
+                                  maxlength="1000"
+                                  placeholder="Brief description of the book...">{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.description.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Maximum 1000 characters</small>
+                    </div>
+                    
+                    <!-- Non-field errors -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error|escape }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Submit Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'book-detail' book.pk %}" class="btn btn-secondary me-md-2">
+                            ❌ Cancel
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            💾 Update Book
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Book Information -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">📊 Book Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Created:</strong> {{ book.created_at|date:"M d, Y H:i" }}</li>
+                            <li><strong>Last Updated:</strong> {{ book.updated_at|date:"M d, Y H:i" }}</li>
+                            {% if book.added_by %}
+                                <li><strong>Added By:</strong> {{ book.added_by.username|escape }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Security Information -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">🔒 Security Details</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>CSRF Protection:</strong> ✅ Active</li>
+                            <li><strong>Permission Required:</strong> ✅ 'can_edit'</li>
+                            <li><strong>Input Validation:</strong> ✅ Server-side validation</li>
+                            <li><strong>XSS Prevention:</strong> ✅ Output escaping</li>
+                            <li><strong>Audit Trail:</strong> ✅ Modification tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Client-side validation enhancement -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const isbnInput = document.getElementById('{{ form.isbn.id_for_label }}');
+    
+    // ISBN format validation
+    if (isbnInput) {
+        isbnInput.addEventListener('blur', function() {
+            const isbn = this.value.replace(/[-\s]/g, '');
+            if (isbn && !/^\d{10}(\d{3})?$/.test(isbn)) {
+                this.setCustomValidity('Please enter a valid 10 or 13 digit ISBN');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+    
+    // Form submission confirmation
+    form.addEventListener('submit', function(e) {
+        if (!confirm('Are you sure you want to update this book?')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

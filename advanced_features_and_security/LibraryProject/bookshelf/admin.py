@@ -27,6 +27,10 @@ class CustomUserAdmin(UserAdmin):
     list_filter = UserAdmin.list_filter + ('date_of_birth',)
 
 
+# Explicit registration for CustomUser and CustomUserAdmin
+admin.site.register(CustomUser, CustomUserAdmin)
+
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     """

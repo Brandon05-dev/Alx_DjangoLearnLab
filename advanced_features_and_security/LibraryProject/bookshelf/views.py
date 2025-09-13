@@ -5,6 +5,30 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import Book, CustomUser
+from .forms import ExampleForm
+
+# Secure form example view
+from django.views.decorators.csrf import csrf_protect
+from django.utils.html import escape
+
+@login_required
+@csrf_protect
+def example_form_view(request):
+    """
+    Example view demonstrating secure form handling with CSRF protection and input validation.
+    """
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Sanitize and process the cleaned data
+            name = escape(form.cleaned_data['name'])
+            email = escape(form.cleaned_data['email'])
+            message = escape(form.cleaned_data['message'])
+            messages.success(request, 'Form submitted securely!')
+            return render(request, 'bookshelf/form_example.html', {'form': ExampleForm(), 'success': True, 'name': name, 'email': email, 'message': message})
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/form_example.html', {'form': form})
 
 
 class BookListView(LoginRequiredMixin, ListView):

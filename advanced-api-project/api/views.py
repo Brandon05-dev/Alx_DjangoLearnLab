@@ -1,5 +1,7 @@
 from rest_framework import generics, permissions, filters
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework
 from .models import Book
 from .serializers import BookSerializer
 
@@ -44,7 +46,7 @@ class BookListView(generics.ListAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # Allow read access to all users
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Allow read access to all, write access to authenticated users
     
     # Enable filtering, searching, and ordering
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -73,7 +75,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # Allow read access to all users
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Allow read access to all users
 
 
 class BookCreateView(generics.CreateAPIView):
@@ -93,7 +95,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can create
+    permission_classes = [IsAuthenticated]  # Only authenticated users can create
 
 
 class BookUpdateView(generics.UpdateAPIView):
@@ -114,7 +116,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]  # Role-based permissions
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]  # Role-based permissions
 
 
 class BookDeleteView(generics.DestroyAPIView):
@@ -130,4 +132,4 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]  # Role-based permissions
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]  # Role-based permissions

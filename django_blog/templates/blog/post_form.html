@@ -1,0 +1,56 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="content-section">
+        <h2>{% if form.instance.pk %}Update Post{% else %}Create New Post{% endif %}</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Blog Post</legend>
+                <div class="form-group mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="text-danger">
+                            {% for error in form.title.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <div class="text-danger">
+                            {% for error in form.content.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="{{ form.tags.id_for_label }}" class="form-label">{{ form.tags.label }}</label>
+                    {{ form.tags }}
+                    <small class="form-text text-muted">Separate tags with commas (e.g., python, django, web development)</small>
+                    {% if form.tags.errors %}
+                        <div class="text-danger">
+                            {% for error in form.tags.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">
+                    {% if form.instance.pk %}Update{% else %}Create{% endif %}
+                </button>
+                <a class="btn btn-outline-secondary" href="{% url 'blog-home' %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

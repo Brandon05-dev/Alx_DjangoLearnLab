@@ -1,0 +1,26 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Delete Comment</legend>
+                <h2>Are you sure you want to delete your comment?</h2>
+                <div class="comment mt-3">
+                    <div class="comment-meta">
+                        <strong>{{ comment.author.username }}</strong>
+                        <small class="text-muted">on {{ comment.created_at|date:"F d, Y at g:i A" }}</small>
+                    </div>
+                    <div class="comment-content">
+                        {{ comment.content }}
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Yes, Delete</button>
+                <a class="btn btn-outline-secondary" href="{% url 'post-detail' comment.post.id %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

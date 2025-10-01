@@ -4,6 +4,20 @@ from .models import Book
 from .serializers import BookSerializer
 
 
+# Custom permission class for role-based access
+class IsAuthorOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow authors to edit their own books.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed for all authenticated users
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        # Write permissions are only allowed to the author of the book
+        return obj.author == request.user
+
+
 class BookListView(generics.ListAPIView):
     """
     Generic ListView for retrieving all books with advanced query capabilities.
@@ -96,11 +110,11 @@ class BookUpdateView(generics.UpdateAPIView):
     - Automatically handles form submissions and data validation
     
     Permissions:
-    - Restricted to authenticated users only
+    - Restricted to authenticated users with role-based access
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can update
+    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]  # Role-based permissions
 
 
 class BookDeleteView(generics.DestroyAPIView):
@@ -112,8 +126,8 @@ class BookDeleteView(generics.DestroyAPIView):
     delete-only endpoints for model instances.
     
     Permissions:
-    - Restricted to authenticated users only
+    - Restricted to authenticated users with role-based access
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can delete
+    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]  # Role-based permissions
